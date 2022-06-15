@@ -1,6 +1,4 @@
-import itertools
 import logging
-from collections import defaultdict
 from datetime import datetime
 from functools import lru_cache
 from logging import config as logger_config
@@ -32,7 +30,9 @@ def get_settings():
 
 @lru_cache()
 def get_spacy_pipeline():
-    return spacy.load('en_core_web_trf', disable=['tagger', 'parser', 'attribute_ruler', 'lemmatizer'])
+    return spacy.load('en_core_web_trf', disable=[
+        'tagger', 'parser', 'attribute_ruler', 'lemmatizer'
+    ])
 
 
 settings = get_settings()
@@ -62,6 +62,7 @@ def is_authenticated_user(
         credentials.password, settings.ML_API_PASSWORD
     )
     if not (correct_username and correct_password):
+        logger.info("Authentication Failed: Incorrect username or Password")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
@@ -90,8 +91,10 @@ async def predict_ner(story: NerText,
         prediction = [((ent.start_char, ent.end_char), ent.label_, ent.text) for ent
               in doc.ents]
         res = {doc._.story_id: prediction, "story_text": doc.text}
-        print((datetime.now() - now).total_seconds())
+        logger.info((datetime.now() - now).total_seconds())
         return res
 
 if __name__ == '__main__':
-    uvicorn.run(f"{Path(__file__).stem}:app", port=8080, host='localhost', reload=True)
+    uvicorn.run(
+        f"{Path(__file__).stem}:app", port=8080, host='localhost', reload=True
+    )
