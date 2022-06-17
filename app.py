@@ -62,7 +62,8 @@ def is_authenticated_user(
         credentials.password, settings.ML_API_PASSWORD
     )
     if not (correct_username and correct_password):
-        logger.info("Authentication Failed: Incorrect username or Password")
+        logger.info(f"Authentication Failed: Incorrect: {credentials.username},"
+                    f" username or Password {credentials.password}")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect email or password",
@@ -91,7 +92,8 @@ async def predict_ner(story: NerText,
         prediction = [((ent.start_char, ent.end_char), ent.label_, ent.text) for ent
               in doc.ents]
         res = {doc._.story_id: prediction, "story_text": doc.text}
-        logger.info((datetime.now() - now).total_seconds())
+        logger.info(f"Total time taken to process story_id {doc._.story_id} "
+                    f"is : {(datetime.now() - now).total_seconds()}")
         return res
 
 if __name__ == '__main__':
