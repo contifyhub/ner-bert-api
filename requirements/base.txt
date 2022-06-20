@@ -1,0 +1,11 @@
+fastapi==0.70.0
+gunicorn==20.1.0
+Cython==0.29.26
+ipython==7.30.0
+joblib==0.11
+pydantic==1.8.2
+python-dotenv==0.19.2
+uvicorn==0.15.0
+spacy==3.3.0
+spacy-transformers==1.1.5
+https://github.com/explosion/spacy-models/releases/download/en_core_web_trf-3.3.0/en_core_web_trf-3.3.0.tar.gz
