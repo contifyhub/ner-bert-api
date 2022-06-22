@@ -5,8 +5,8 @@ ROOT_DIR = os.path.join("..")
 
 
 class MlApiSettings(BaseSettings):
-    ML_API_USERNAME: str = ''
-    ML_API_PASSWORD: str = ''
+    BERT_NER_USERNAME: str = ''
+    BERT_NER_PASSWORD: str = ''
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
