@@ -56,10 +56,10 @@ def is_authenticated_user(
         settings: config.MlApiSettings = Depends(get_settings)):
 
     correct_username = secrets.compare_digest(
-        credentials.username, settings.ML_API_USERNAME
+        credentials.username, settings.BERT_NER_USERNAME
     )
     correct_password = secrets.compare_digest(
-        credentials.password, settings.ML_API_PASSWORD
+        credentials.password, settings.BERT_NER_PASSWORD
     )
     if not (correct_username and correct_password):
         logger.info(f"Authentication Failed: Incorrect: {credentials.username},"
