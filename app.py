@@ -2,6 +2,7 @@ import logging
 from datetime import datetime
 from functools import lru_cache
 from logging import config as logger_config
+import traceback
 
 import torch
 
@@ -98,8 +99,7 @@ async def predict_ner(story: NerText,
             return res
     except Exception as err:
         logger.info(f"Ner Bert: Error occurred for story {story} "
-                    f"{err}")
-
+                    f" Error: {err} , Traceback: {traceback.format_exc()}")
 
 if __name__ == '__main__':
     uvicorn.run(
