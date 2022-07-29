@@ -79,22 +79,27 @@ async def predict_ner(story: NerText,
     params: story: ArticleText
     Return: Tagged Entities
     """
-    story_tuple = []
-    data = story.dict()
-    now = datetime.now()
-    for story_val in data['text']:
-        story_tuple.append(tuple(story_val))
-    if not Doc.has_extension("story_id"):
-        Doc.set_extension("story_id", default=None)
-    doc_tuples = nlp.pipe(story_tuple, as_tuples=True)
-    for doc, context in doc_tuples:
-        doc._.story_id = context["story_id"]
-        prediction = [((ent.start_char, ent.end_char), ent.label_, ent.text) for ent
-              in doc.ents]
-        res = {doc._.story_id: prediction, "story_text": doc.text}
-        logger.info(f"Total time taken to process story_id {doc._.story_id} "
-                    f"is : {(datetime.now() - now).total_seconds()}")
-        return res
+    try:
+        story_tuple = []
+        data = story.dict()
+        now = datetime.now()
+        for story_val in data['text']:
+            story_tuple.append(tuple(story_val))
+        if not Doc.has_extension("story_id"):
+            Doc.set_extension("story_id", default=None)
+        doc_tuples = nlp.pipe(story_tuple, as_tuples=True)
+        for doc, context in doc_tuples:
+            doc._.story_id = context["story_id"]
+            prediction = [((ent.start_char, ent.end_char), ent.label_, ent.text) for ent
+                  in doc.ents]
+            res = {doc._.story_id: prediction, "story_text": doc.text}
+            logger.info(f"Total time taken to process story_id {doc._.story_id} "
+                        f"is : {(datetime.now() - now).total_seconds()}")
+            return res
+    except Exception as err:
+        logger.info(f"Ner Bert: Error occurred for story {story} "
+                    f"{err}")
+
 
 if __name__ == '__main__':
     uvicorn.run(
