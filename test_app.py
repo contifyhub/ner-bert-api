@@ -70,7 +70,7 @@ def is_authenticated_user(
     return True
 
 
-@app.post('/predict/ner/')
+@app.post('/predict/test_ner/')
 async def predict_ner(story: NerText,
                       auth_status: int = Depends(is_authenticated_user)):
     """This api is used to tag ner from Text.
