@@ -80,6 +80,7 @@ async def predict_ner(story: NerText,
     params: story: ArticleText
     Return: Tagged Entities
     """
+    
     story_tuple = []
     data = story.dict()
     now = datetime.now()
