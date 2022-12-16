@@ -16,9 +16,12 @@ import os
 import secrets
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import config
-from serializers import NerText
+from serializers import NerText, SummaryText
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
+tokenizer = AutoTokenizer.from_pretrained("./distilbart-cnn-12-6")
 
+model = AutoModelForSeq2SeqLM.from_pretrained("./distilbart-cnn-12-6")
 
 app = FastAPI()
 security = HTTPBasic()
@@ -134,6 +137,31 @@ async def predict_ner(story: NerText,
         return results
     except Exception as err:
         logger.info(f"Ner Bert: Error occurred for story {story} "
+                    f" Error: {err} , Traceback: {traceback.format_exc()}")
+
+
+@app.post('/predict/summarize_text/')
+async def summarize_text(story: SummaryText,
+                         auth_status: int = Depends(is_authenticated_user)):
+    try:
+        data = story.dict()
+        summary_text = data['text']
+        inputs = tokenizer(
+            [summary_text],
+            max_length=1024,
+            return_tensors="pt"
+        )
+        # Generate Summary
+        summary_ids = model.generate(inputs["input_ids"], num_beams=2,
+                                     min_length=0, max_length=100)
+        bert_output = tokenizer.batch_decode(summary_ids,
+                                             skip_special_tokens=True,
+                                             clean_up_tokenization_spaces=False
+                                             )
+        return bert_output[0]
+
+    except Exception as err:
+        logger.info(f"Ner Bert: Error occurred for story {summary_text} "
                     f" Error: {err} , Traceback: {traceback.format_exc()}")
 
 if __name__ == '__main__':
